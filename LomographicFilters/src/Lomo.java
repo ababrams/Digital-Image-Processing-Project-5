@@ -37,8 +37,8 @@ public class Lomo {
 		int r = 3;
 		Mat red = redFilter(img, s);
 		Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0, Imgproc.INTER_AREA);
-		 haloFilter(red, r);
-		HighGui.imshow("Image", red);
+		Mat filteredImage = haloFilter(red, r);
+		HighGui.imshow("Image", filteredImage);
 		HighGui.waitKey();
 		System.exit(0);
 	}
