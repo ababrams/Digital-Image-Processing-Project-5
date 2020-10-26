@@ -1,9 +1,16 @@
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
+import javax.imageio.ImageIO;
 
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.CvType; 
 import org.opencv.core.Size;
@@ -17,21 +24,23 @@ import org.opencv.highgui.HighGui;
 
 public class Lomo {
 	public static Mat img;
-
-
-public static void main(String args[]) {
-	System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-	img =  Imgcodecs.imread("images/costume.png", 1);
-	double s = 0.2;
-	redFilter(img, s);
-	Imgproc.resize(img, img, new Size(img.rows()/2, img.rows()/2), 0, 0, 
-	         Imgproc.INTER_AREA);
-	//HighGui.imshow("Image", img);
-	HighGui.waitKey();
-	System.exit(0);
-}
-
-
+	public static void main(String args[]) {
+		System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
+		
+		if (args.length == 0) {
+			System.out.println("-h for information on how to use solution.");
+		} else {
+			commandLineParser(args[0]);
+		}
+		img =  Imgcodecs.imread("images/costume.png", 1);
+		double s = 0.2;
+		redFilter(img, s);
+		Imgproc.resize(img, img, new Size(img.rows()/2, img.rows()/2), 0, 0, 
+		         Imgproc.INTER_AREA);
+		//HighGui.imshow("Image", img);
+		HighGui.waitKey();
+		System.exit(0);
+	}
 
 
 /**
@@ -64,6 +73,61 @@ public static Mat makeLUT(Mat img, double s) {
     return lookupTable;
     
 }
+	/**
+	 * Processes argument passed from command line. If the argument is the file path
+	 * of image the GUI is executed.
+	 * 
+	 * @param s argument at index 0
+	 */
+	public static void commandLineParser(String s) {
+		switch (s) {
+		case "-h":
+			System.out.println("How to use this program.\n\n"
+					+ "After program compilation, when running the program, include directory path of desired image to be manipulated after program call.\n"
+					+ "\n\tLomo <image-file-name>" + "\n\nThe GUI will now execute with provided image."
+					+ "\nUse trackbars to manipulate image according to assignment specifications and requirements."
+					+ "\nPress 's' to save copy of the current image in display and enter filename."
+					+ "\nPress 'q' to terminate the application.");
+			break;
+		default:
+			File f = new File(s);
+			if (f.isFile()) {
+				try {
+					BufferedImage img = ImageIO.read(f);
+					if(img == null) {
+						System.out.println("File at " + f.toString() + " is not an image.");
+						System.exit(0);
+					} else {
+						//execute GUI here	
+						System.out.println("Image: " + f.toString());
+					}
+				} catch(IOException e){
+					System.out.println("File could not be opened.");
+				}
+			} else if(f.isDirectory()) {
+				System.out.println("Filepath is a directory, include file in passed arguments.");
+			} else {
+				System.out.println("Filepath to image error.");
+			}
+		}
+	}
+	
+	/**
+	 * Saves copy of current displayed image user must input filepath and
+	 * filename.
+	 * @param img current displayed image
+	 */
+	public static void save(Mat img) {
+		Scanner in = new Scanner(System.in);
+		
+		System.out.println("Enter filepath and filename to save current copy of image: ");
+		String fName = in.next();
+		
+		Imgcodecs.imwrite(fName, img);
+		System.out.println("Image saved.");
+		
+		in.close();
+	}
 
 /**
  * Performs the filter on the image by calling the lookuptable 
@@ -79,10 +143,68 @@ public static Mat redFilter(Mat img, double s) {
 	Core.split(img, channels);
 	//performs the lookup table manipulation to the image using the lookuptable created in makeLUT
 	Core.LUT(channels.get(2), redLUT, channels.get(2));
-
 	//merges the original image to the manipulated image
 	Core.merge(channels, img);
 	HighGui.imshow("Image", img);
 	return img;
 }
+	/**
+	 * Makes the lookup table in the form of a matrix
+	 * 
+	 * @param s, value the red channel is manipulated
+	 * @return lookup table matrix
+	 */
+	public static Mat makeLUT(double s) {
+		// checks that all pixel values are between 0 and 256
+		if (s < 0 || s > 256) {
+			System.out.println("Invalid Number of Colors. It must be between 0 and 256 inclusive.");
+			return null;
+		}
+		// creates the lookuptable		
+		Mat lookupTable = Mat.zeros(new Size(1, 256), CvType.CV_8UC1);
+		int i = 0;
+		int startIdx = i;
+		// i is the column, y is the row
+		for (i = 0; i < 256; i++) {
+			for (int y = startIdx; y < i; y++) {
+				double a = -(i / 256 - 0.5) / s;
+				double e = Math.exp(a);
+				double result = 1 / (1 + e);
+				// sets the data for that particular pixel as the calculated data
+				lookupTable.put(i, y, result);
+			}
+			startIdx = i;
+
+		}
+		return lookupTable;
+
+	}
+
+	
+	/**
+	 * Applies vignette effect to image
+	 * 
+	 * @param img image being manipulated
+	 * @param r radius tracked by slider, must range 1 <= r <= 100
+	 * @return image with halo filter 
+	 */
+	public static Mat haloFilter(Mat img, int r) {
+		// deep copy of image source
+		Mat m = new Mat();
+		img.copyTo(m);
+		
+		//create new image of the same size
+		Mat mask = new Mat(img.rows(), img.cols(), CvType.CV_32FC3);
+		
+		// assign the value of 0.75 to each element in matrix
+		for(int i = 0; i < img.rows(); i++) {
+			for(int j = 0; j < img.cols(); j++) {
+				mask.put(i, j, 0.75);
+			}
+		}
+		
+		
+		return m;
+	}
+
 }
