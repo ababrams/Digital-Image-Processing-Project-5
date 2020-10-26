@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -23,6 +24,8 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 public class Lomo {
 	public static void main(String args[]) {
+		System.loadLibrary( Core.NATIVE_LIBRARY_NAME );
+		
 		if (args.length == 0) {
 			System.out.println("-h for information on how to use solution.");
 		} else {
@@ -81,6 +84,7 @@ public class Lomo {
 		String fName = in.next();
 		
 		Imgcodecs.imwrite(fName, img);
+		System.out.println("Image saved.");
 		
 		in.close();
 	}
@@ -97,8 +101,8 @@ public class Lomo {
 			System.out.println("Invalid Number of Colors. It must be between 0 and 256 inclusive.");
 			return null;
 		}
-		// creates the lookuptable
-		Mat lookupTable = Mat.zeros(new Size(1, 256), CV_8UC1);
+		// creates the lookuptable		
+		Mat lookupTable = Mat.zeros(new Size(1, 256), CvType.CV_8UC1);
 		int i = 0;
 		int startIdx = i;
 		// i is the column, y is the row
