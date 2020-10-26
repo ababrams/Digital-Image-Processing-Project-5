@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.CvType;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -36,10 +35,10 @@ public class Lomo {
 		img = Imgcodecs.imread("images/costume.png", 1);
 		double s = 0.2;
 		int r = 3;
-		redFilter(img, s);
+		Mat red = redFilter(img, s);
 		Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0, Imgproc.INTER_AREA);
-		// haloFilter(img, r);
-		HighGui.imshow("Image", img);
+		 haloFilter(red, r);
+		HighGui.imshow("Image", red);
 		HighGui.waitKey();
 		System.exit(0);
 	}
@@ -83,7 +82,7 @@ public class Lomo {
 				double a = -((i / 256) - 0.5) / s;
 				double e = Math.exp(a);
 				double result = 1 / (1 + e);
-				// sets the data for that particular pixel as the calculated data
+				// sets the data for that index as the calculated data
 				lookupTable.put(i, y, result);
 			}
 			startIdx = i;
@@ -156,10 +155,21 @@ public class Lomo {
 	 * @return image with halo filter
 	 */
 	public static Mat haloFilter(Mat img, int r) {
+		//rMax = maximum radius.
+		int rMax = 0;
+		Mat newMat;
 		// deep copy of image source
 		Mat m = new Mat();
 		img.copyTo(m);
-
+		if (m.rows()<m.cols()) {
+			 rMax = m.rows();
+		} else {
+			rMax = m.cols();
+		}
+		if (r > rMax) {
+		   System.out.println("raduis can not be greater than" + rMax);
+		   //TODO prompt for new r value. probably needs to be in the gui code. 
+		}
 		// create new image of the same size
 		Mat mask = new Mat(img.rows(), img.cols(), CvType.CV_32FC3);
 
@@ -169,8 +179,11 @@ public class Lomo {
 				mask.put(i, j, 0.75);
 			}
 		}
-
-		return m;
+		
+		//kernel_size = r\r;
+		Imgproc.blur(m, m, kernel_size);
+		Core.multiply(img, m, newMat); 
+		return newMat;
 	}
 
 }
