@@ -17,6 +17,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 
 /**
  *
@@ -140,5 +141,31 @@ public class Lomo {
 		// merges the original image to the manipulated image
 		Core.merge(BGR, img);
 		return img;
+	}
+	
+	/**
+	 * Applies vignette effect to image
+	 * 
+	 * @param img image being manipulated
+	 * @param r radius tracked by slider, must range 1 <= r <= 100
+	 * @return image with halo filter 
+	 */
+	public static Mat haloFilter(Mat img, int r) {
+		// deep copy of image source
+		Mat m = new Mat();
+		img.copyTo(m);
+		
+		//create new image of the same size
+		Mat mask = new Mat(img.rows(), img.cols(), CvType.CV_32FC3);
+		
+		// assign the value of 0.75 to each element in matrix
+		for(int i = 0; i < img.rows(); i++) {
+			for(int j = 0; j < img.cols(); j++) {
+				mask.put(i, j, 0.75);
+			}
+		}
+		
+		
+		return m;
 	}
 }
