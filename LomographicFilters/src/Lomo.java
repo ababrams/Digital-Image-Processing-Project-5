@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -14,6 +15,7 @@ import javax.swing.JLabel;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
 
 /**
  *
@@ -65,6 +67,22 @@ public class Lomo {
 				System.out.println("Filepath to image error.");
 			}
 		}
+	}
+	
+	/**
+	 * Saves copy of current displayed image user must input filepath and
+	 * filename.
+	 * @param img current displayed image
+	 */
+	public static void save(Mat img) {
+		Scanner in = new Scanner(System.in);
+		
+		System.out.println("Enter filepath and filename to save current copy of image: ");
+		String fName = in.next();
+		
+		Imgcodecs.imwrite(fName, img);
+		
+		in.close();
 	}
 
 	/**
