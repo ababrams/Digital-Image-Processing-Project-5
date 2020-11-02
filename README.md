@@ -53,7 +53,7 @@ The save button was selected and filepath and filename were entered.
 
 Result: Image was saved in the correct location with the correct filename
 
-Test5:
+Test6:
 Wrong keys pressed during JFrame operation
 
 Result: Nothing occurs as the only keys with listeners are the ones detailed in the ReadMe
