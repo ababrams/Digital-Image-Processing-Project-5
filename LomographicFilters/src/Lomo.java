@@ -1,4 +1,5 @@
 
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -33,12 +34,12 @@ public class Lomo {
 			commandLineParser(args[0]);
 		}
 		img = Imgcodecs.imread("images/costume.png", 1);
-		double s = 0.2;
+		double s = 0.08;
 		int r = 3;
 		Mat red = redFilter(img, s);
 		Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0, Imgproc.INTER_AREA);
-		Mat filteredImage = haloFilter(red, r);
-		HighGui.imshow("Image", filteredImage);
+		//Mat filteredImage = haloFilter(red, r);
+		HighGui.imshow("Image", red);
 		HighGui.waitKey();
 		System.exit(0);
 	}
@@ -73,19 +74,14 @@ public class Lomo {
 	 */
 	public static Mat makeLUT(double s) {
 		// creates the lookup table
-		Mat lookupTable = new Mat(new Size(1, 256), CvType.CV_8UC1);
-		int i = 0;
-		int startIdx = i;
-		// i is the column, y is the row
-		for (i = 0; i < 256; i++) {
-			for (int y = startIdx; y < i + 1; y++) {
-				double a = -((i / 256) - 0.5) / s;
-				double e = Math.exp(a);
-				double result = 1 / (1 + e);
-				// sets the data for that index as the calculated data
-				lookupTable.put(i, y, result);
-			}
-			startIdx = i;
+		Mat lookupTable = new Mat(1, 256, CvType.CV_8UC1);
+		
+		for(double i = 0; i < 256; i++) {
+			double a = -(((i / 256.0) - 0.5) / s);
+			double e = Math.exp(a);
+			double result = 256.0 / (1.0 + e);
+			// sets the data for that index as the calculated data
+			lookupTable.put(0,(int) i, result);
 		}
 		return lookupTable;
 
@@ -180,10 +176,10 @@ public class Lomo {
 			}
 		}
 		
-		//kernel_size = r\r;
-		Imgproc.blur(m, m, kernel_size);
-		Core.multiply(img, m, newMat); 
-		return newMat;
+	
+		//Imgproc.blur(m, m, kernel_size);
+		//Core.multiply(img, m, newMat);
+		return m;
 	}
 
 }
