@@ -1,0 +1,34 @@
+Program requires an image passeed in as a command line argument
+
+Test1:
+Execute program with a file that is not an image.
+
+Result: Console output "File at ballpit.docx is not an image."
+
+Test2:
+Execute program with file that does not exist
+
+Result: Console output "File could not be opened."
+
+Test3:
+Task bar was set as 100 and 0.20. Then the task bar was set at 1 and 0.08
+
+Result: The image changed appropriately 
+
+Test4:
+The save button was selected 
+
+Result: "Enter filepath and filename to save current copy of image:"
+
+Test5:
+The save button was selected and filepath and filename were entered. 
+
+Result: Image was saved in the correct location with the correct filename
+
+Test5:
+Wrong keys pressed during JFrame operation
+
+Result: Nothing occurs as the only keys with listeners are the ones detailed in the ReadMe
+
+These are only types of tests conducted for program. The rest of the program is self contained and cannot deviate from normal operation if the requirements are meet.
+
