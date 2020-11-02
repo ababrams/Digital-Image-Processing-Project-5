@@ -55,7 +55,7 @@ public class Lomo {
 		}
 		img = Imgcodecs.imread("images/costume.png", 1);
 		double s = 0.08;
-		double r = 3;
+		double r = 45;
 		Mat red = redFilter(img, s);
 		Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0, Imgproc.INTER_AREA);
 		Mat filteredImage = haloFilter(red, r);
@@ -172,7 +172,6 @@ public class Lomo {
 	 * @return image with halo filter
 	 */
 	public static Mat haloFilter(Mat img, double r) {
-		r = r* 100;
 		//rMax = maximum radius.
 		int rMax = 0;
 		if (img.rows()<img.cols()) {
@@ -180,10 +179,9 @@ public class Lomo {
 		} else {
 			rMax = img.cols();
 		}
-		if (r > rMax) {
-		   System.out.println("raduis can not be greater than" + rMax);
-		   //TODO prompt for new r value. probably needs to be in the gui code. 
-		}
+		
+		double radius = (r * .01) * rMax;
+		
 		// create new image of the same size
 		Mat mask = new Mat(img.rows(), img.cols(), CvType.CV_32FC3);
 		// assign the value of 0.75 to each element in matrix
@@ -197,17 +195,16 @@ public class Lomo {
 				//blue channel
 				maskChannel[2] = 0.75;
 			}
-			//finds the center point of the image 
-			int centerCol= img.cols()/2;
-			int centerRow = img.rows()/2;
-			//creates a circle on the mask with white color represented in the scalar object. 
-			Imgproc.circle(mask, new Point(centerCol, centerRow),(int)r, new Scalar(255, 255, 255));
 		}
-		
-		//
-		Size radius = new Size(r, r);
+		//finds the center point of the image
+		int centerCol= img.cols()/2;
+		int centerRow = img.rows()/2;		
+		//creates a circle on the mask with white color represented in the scalar object. 
+		Imgproc.circle(mask, new Point(centerRow, centerCol),(int) radius, new Scalar(1, 1, 1), -1);
+
+		Size circle = new Size(radius, radius);
 		//blur the mask 
-		Imgproc.blur(mask, mask, radius);
+		Imgproc.blur(mask, mask, circle);
 		img.convertTo(img, CvType.CV_32FC3);
 		//multiply the mask image with the image manipulated by the red filter
 		Mat newMat = new Mat();
