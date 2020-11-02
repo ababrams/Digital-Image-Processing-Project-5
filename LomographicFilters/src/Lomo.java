@@ -1,5 +1,4 @@
-
-
+package src;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +12,8 @@ import javax.imageio.ImageIO;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -35,11 +36,11 @@ public class Lomo {
 		}
 		img = Imgcodecs.imread("images/costume.png", 1);
 		double s = 0.08;
-		int r = 3;
+		double r = 3;
 		Mat red = redFilter(img, s);
 		Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0, Imgproc.INTER_AREA);
-		//Mat filteredImage = haloFilter(red, r);
-		HighGui.imshow("Image", red);
+		Mat filteredImage = haloFilter(red, r);
+		HighGui.imshow("Image", filteredImage);
 		HighGui.waitKey();
 		System.exit(0);
 	}
@@ -107,7 +108,7 @@ public class Lomo {
 			File f = new File(s);
 			if (f.isFile()) {
 				try {
-					BufferedImage img = ImageIO.read(f);
+					img = Imgcodecs.imread(s, 1);
 					if (img == null) {
 						System.out.println("File at " + f.toString() + " is not an image.");
 						System.exit(0);
@@ -146,21 +147,17 @@ public class Lomo {
 	/**
 	 * Applies vignette effect to image
 	 * 
-	 * @param img image being manipulated
+	 * @param img image previously manipulated by the red filter
 	 * @param r   radius tracked by slider, must range 1 <= r <= 100
 	 * @return image with halo filter
 	 */
-	public static Mat haloFilter(Mat img, int r) {
+	public static Mat haloFilter(Mat img, double r) {
 		//rMax = maximum radius.
 		int rMax = 0;
-		Mat newMat;
-		// deep copy of image source
-		Mat m = new Mat();
-		img.copyTo(m);
-		if (m.rows()<m.cols()) {
-			 rMax = m.rows();
+		if (img.rows()<img.cols()) {
+			 rMax = img.rows();
 		} else {
-			rMax = m.cols();
+			rMax = img.cols();
 		}
 		if (r > rMax) {
 		   System.out.println("raduis can not be greater than" + rMax);
@@ -168,18 +165,33 @@ public class Lomo {
 		}
 		// create new image of the same size
 		Mat mask = new Mat(img.rows(), img.cols(), CvType.CV_32FC3);
-
 		// assign the value of 0.75 to each element in matrix
 		for (int i = 0; i < img.rows(); i++) {
 			for (int j = 0; j < img.cols(); j++) {
-				mask.put(i, j, 0.75);
+				double [] maskChannel = mask.get(i,j);
+				//red channel
+				maskChannel[0] = 0.75;
+				//green channel
+				maskChannel[1] = 0.75;
+				//blue channel
+				maskChannel[2] = 0.75;
 			}
+			//finds the center point of the image 
+			int centerCol= img.cols()/2;
+			int centerRow = img.rows()/2;
+			//creates a circle on the mask with white color represented in the scalar object. 
+			Imgproc.circle(mask, new Point(centerCol, centerRow),(int)r, new Scalar(255, 255, 255));
 		}
 		
-	
+		//
 		//Imgproc.blur(m, m, kernel_size);
+		//multiply the mask image with the image manipulated by the red filter
 		//Core.multiply(img, m, newMat);
-		return m;
+		return newMat;
+	}
+
+	public static void lomoGUI() {
+		
 	}
 
 }

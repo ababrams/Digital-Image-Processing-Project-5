@@ -1,4 +1,5 @@
-package lomographic;
+package src;
+
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -26,11 +27,7 @@ public class LomoGUI {
     private JLabel imgLabel;
     
     //image paths done manually for now so they must be readjusted
-    public AddingImagesTrackbar(String[] args) {
-        String imagePath1 = "\"images/costume.png\";
-        if (args.length > 1) {
-            imagePath1 = args[0];
-        }
+    public void AddingImagesTrackbar() {
         matImgSrc1 = Imgcodecs.imread(imagePath1);
 
         if (matImgSrc1.empty()) {
@@ -78,16 +75,17 @@ public class LomoGUI {
         pane.add(imgLabel, BorderLayout.CENTER);
     }
 
-    public static void main(String[] args) {
-        // Load the native OpenCV library
-        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-        // Schedule a job for the event dispatch thread:
-        // creating and showing this application's GUI.
-        javax.swing.SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new AddingImagesTrackbar(args);
-            }
-        });
-    }
+    
+//    public static void main(String[] args) {
+//        // Load the native OpenCV library
+//        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+//        // Schedule a job for the event dispatch thread:
+//        // creating and showing this application's GUI.
+//        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                new AddingImagesTrackbar(args);
+//            }
+//        });
+//    }
 }
