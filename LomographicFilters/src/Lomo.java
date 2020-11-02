@@ -225,7 +225,7 @@ public class Lomo {
         addComponentsToPane(frame.getContentPane(), img);
         // Use the content pane's default BorderLayout. No need for
         // setLayout(new BorderLayout());
-        // Display the window.
+        // Display the window
         frame.pack();
         frame.setVisible(true);
 	}
