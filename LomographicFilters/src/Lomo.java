@@ -184,7 +184,7 @@ public class Lomo {
 		}
 		
 		//
-		//Imgproc.blur(m, m, kernel_size);
+		//Imgproc.blur(mask, mask, kernel_size);
 		//multiply the mask image with the image manipulated by the red filter
 		//Core.multiply(img, m, newMat);
 		return newMat;
