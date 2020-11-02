@@ -114,8 +114,8 @@ public class Lomo {
 	 * 
 	 * @param s argument at index 0
 	 */
-	public static void commandLineParser(String s) {
-		switch (s) {
+	public static void commandLineParser(String f) {
+		switch (f) {
 		case "-h":
 			System.out.println("How to use this program.\n\n"
 					+ "After program compilation, when running the program, include directory path of desired image to be manipulated after program call.\n"
@@ -125,21 +125,21 @@ public class Lomo {
 					+ "\nPress 'q' to terminate the application.");
 			break;
 		default:
-			File f = new File(s);
-			if (f.isFile()) {
+			File file = new File(f);
+			if (file.isFile()) {
 				try {
-					img = Imgcodecs.imread(s, 1);
+					img = Imgcodecs.imread(f, 1);
 					if (img == null) {
-						System.out.println("File at " + f.toString() + " is not an image.");
+						System.out.println("File at " + file.toString() + " is not an image.");
 						System.exit(0);
 					} else {
 						lomoGUI(img);
-						System.out.println("Image: " + f.toString());
+						System.out.println("Image: " + file.toString());
 					}
 				} catch (IOException e) {
 					System.out.println("File could not be opened.");
 				}
-			} else if (f.isDirectory()) {
+			} else if (file.isDirectory()) {
 				System.out.println("Filepath is a directory, include file in passed arguments.");
 			} else {
 				System.out.println("Filepath to image error.");
