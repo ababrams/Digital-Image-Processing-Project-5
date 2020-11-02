@@ -24,4 +24,5 @@ To change the radius and the color manipulation parameter, toggle each trackbar.
 The image is set in a display browser to be viewed as it is manipulated. //TODO save function information
 
 Observations.txt: contains noted observations from applying algorithms to the image during Lomographic filter project
+
 Testing.txt: contains testing conditions and expected responses
