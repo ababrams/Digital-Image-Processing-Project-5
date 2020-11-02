@@ -1,4 +1,5 @@
 package src;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +9,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -19,13 +22,29 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.highgui.HighGui;
 
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Image;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 /**
  *
  */
 
 public class Lomo {
 	public static Mat img;
-
+	private static JFrame frame;
+	private static JLabel imgLabel;
+    private static final int ALPHA_SLIDER_MAX = 100;
+    private static int alphaVal = 0;
+    
 	public static void main(String args[]) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
@@ -40,6 +59,7 @@ public class Lomo {
 		Mat red = redFilter(img, s);
 		Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0, Imgproc.INTER_AREA);
 		Mat filteredImage = haloFilter(red, r);
+		//lomoGUI(filteredImage);
 		HighGui.imshow("Image", filteredImage);
 		HighGui.waitKey();
 		System.exit(0);
@@ -113,7 +133,7 @@ public class Lomo {
 						System.out.println("File at " + f.toString() + " is not an image.");
 						System.exit(0);
 					} else {
-						// execute GUI here
+						lomoGUI(img);
 						System.out.println("Image: " + f.toString());
 					}
 				} catch (IOException e) {
@@ -152,6 +172,7 @@ public class Lomo {
 	 * @return image with halo filter
 	 */
 	public static Mat haloFilter(Mat img, double r) {
+		r = r* 100;
 		//rMax = maximum radius.
 		int rMax = 0;
 		if (img.rows()<img.cols()) {
@@ -184,14 +205,56 @@ public class Lomo {
 		}
 		
 		//
-		//Imgproc.blur(mask, mask, kernel_size);
+		Size radius = new Size(r, r);
+		//blur the mask 
+		Imgproc.blur(mask, mask, radius);
+		img.convertTo(img, CvType.CV_32FC3);
 		//multiply the mask image with the image manipulated by the red filter
-		//Core.multiply(img, m, newMat);
+		Mat newMat = new Mat();
+		newMat = img.mul(mask);
+		newMat.convertTo(newMat, CvType.CV_8UC3);
 		return newMat;
 	}
 
-	public static void lomoGUI() {
-		
+	public static void lomoGUI(Mat matImg) {
+		 // Create and set up the window.
+        frame = new JFrame("Linear Blend");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Set up the content pane.
+        Image img = HighGui.toBufferedImage(matImg);
+        addComponentsToPane(frame.getContentPane(), img);
+        // Use the content pane's default BorderLayout. No need for
+        // setLayout(new BorderLayout());
+        // Display the window.
+        frame.pack();
+        frame.setVisible(true);
 	}
+	
+	private static void addComponentsToPane(Container pane, Image img) {
+	        if (!(pane.getLayout() instanceof BorderLayout)) {
+	            pane.add(new JLabel("Container doesn't use BorderLayout!"));
+	            return;
+	        }
+	        JPanel sliderPanel = new JPanel();
+	        sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.PAGE_AXIS));
+	        sliderPanel.add(new JLabel(String.format("Alpha x %d", ALPHA_SLIDER_MAX)));
+	        JSlider slider = new JSlider(0, ALPHA_SLIDER_MAX, 0);
+	        slider.setMajorTickSpacing(20);
+	        slider.setMinorTickSpacing(5);
+	        slider.setPaintTicks(true);
+	        slider.setPaintLabels(true);
+	        slider.addChangeListener(new ChangeListener() {
+	            @Override
+	            public void stateChanged(ChangeEvent e) {
+	                JSlider source = (JSlider) e.getSource();
+	                alphaVal = source.getValue();
+	               // update();
+	            }
+	        });
+	        sliderPanel.add(slider);
+	        pane.add(sliderPanel, BorderLayout.PAGE_START);
+	        imgLabel = new JLabel(new ImageIcon(img));
+	        pane.add(imgLabel, BorderLayout.CENTER);
+	    }
 
 }
