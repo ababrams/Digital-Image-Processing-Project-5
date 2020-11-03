@@ -63,7 +63,7 @@ These are only types of tests conducted for program. The rest of the program is 
 
 Observations:
 
-When the radius is set at 100 the halo is not visible. When it is set at 1, an extremely tiny circle is visible. The halo affect is visible when the radius is 45 or less. The most visually effective values for the radius is between 35-45. Any value lower than 35 produces an image that is largely overtaken by the halo. Any value larger than 45 the halo is not visible. 
+When the radius is set at 100 the halo is not visible. When it is set at 1, an extremely tiny circle is visible. The halo affect is visible when the radius is 45 or less. The most visually effective values for the radius is between 35-45. Any value lower than 35 produces an image that is largely overtaken by the halo. Any value larger than 45 the halo is not visible. This is due to the radius of the halo effect being a percentage of the smallest dimension of the image. In the case of our sample image the limiting dimension is it's width which is roughly 45% of its height.
 
 As the value of s decreased, the color in the image became more manipulated. It increased the contrast and saturation. At the value of 0.20, the image was not visibly distinct in color from the original image. The value of 0.08 created the most dramatic color change. 
 
