@@ -67,4 +67,6 @@ When the radius is set at 100 the halo is not visible. When it is set at 1, an e
 
 As the value of s decreased, the color in the image became more manipulated. It increased the contrast and saturation. At the value of 0.20, the image was not visibly distinct in color from the original image. The value of 0.08 created the most dramatic color change. 
 
-The final image compared to the original image is far more saturated in color. The contrast is greater as well and the image appears soft. The manipulated red channel caused the other colors in the image to be visibly different. The halo caused the center to pop and the edges to be darker. 
+The final image compared to the original image is far more saturated in color. The contrast is greater as well and the image appears soft. The manipulated red channel caused the other colors in the image to be visibly different. The halo caused the center to pop and the edges to be darker.
+
+![Example Image](https://gitlab.cs.ecu.edu/digital-image-processing/project-5/-/blob/master/example.JPG)
