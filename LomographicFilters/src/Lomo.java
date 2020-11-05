@@ -1,5 +1,7 @@
 package src;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import java.awt.Container;
 import java.awt.Image;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,10 +43,22 @@ import javax.swing.event.ChangeListener;
 
 public class Lomo {
 	public static Mat img;
-	private static JFrame frame;
-	private static JLabel imgLabel;
     private static final int ALPHA_SLIDER_MAX = 100;
+    private static final int BETA_SLIDER_MAX = 100;
     private static int alphaVal = 0;
+    private Mat matImgSrc1;
+    private Mat matImgSrc2;
+    private Mat matImgDst = new Mat();
+    private static JFrame frame;
+    private static JLabel imgLabel;
+    private  JButton saveButton;
+    private static JSlider sliderS;
+    private static JSlider sliderR;
+    private static JPanel sliderPanel;
+    private static double r;
+    private static double s;
+
+    
     
 	public static void main(String args[]) {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
@@ -53,15 +68,15 @@ public class Lomo {
 		} else {
 			commandLineParser(args[0]);
 		}
-		img = Imgcodecs.imread("images/costume.png", 1);
-		double s = 0.08;
-		double r = 45;
-		Mat red = redFilter(img, s);
-		Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0, Imgproc.INTER_AREA);
-		Mat filteredImage = haloFilter(red, r);
-		//lomoGUI(filteredImage);
-		HighGui.imshow("Image", filteredImage);
-		HighGui.waitKey();
+//		img = Imgcodecs.imread("images/costume.png", 1);
+//		double s = 0.20;
+//		double r = 45;
+//		Mat red = redFilter(img, s);
+//		Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0, Imgproc.INTER_AREA);
+//		Mat filteredImage = haloFilter(red, r);
+//		//lomoGUI(filteredImage);
+//		HighGui.imshow("Image", filteredImage);
+//		HighGui.waitKey();
 		System.exit(0);
 	}
 
@@ -133,7 +148,7 @@ public class Lomo {
 						System.out.println("File at " + file.toString() + " is not an image.");
 						System.exit(0);
 					} else {
-						lomoGUI(img);
+						GUI(img);
 						System.out.println("Image: " + file.toString());
 					}
 				} catch (IOException e) {
@@ -213,13 +228,26 @@ public class Lomo {
 		return newMat;
 	}
 
-	public static void lomoGUI(Mat matImg) {
+	public static void GUI(Mat matImg) {
 		 // Create and set up the window.
         frame = new JFrame("Linear Blend");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Set up the content pane.
-        Image img = HighGui.toBufferedImage(matImg);
-        addComponentsToPane(frame.getContentPane(), img);
+        //Change original image to buffered image to display
+        Image image = HighGui.toBufferedImage(matImg);
+        // Set up the content pane.'
+       addComponentsToPane(frame.getContentPane(), matImg);
+        
+        Mat red = redFilter(matImg, s);
+        Mat filteredImage = haloFilter(red, r);
+		//Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0, Imgproc.INTER_AREA);
+        Image image = HighGui.toBufferedImage(filteredImage);
+        
+     // Set up the content pane.'
+        addComponentsToPane(frame.getContentPane(), image);
+         
+        //TODO make sure image changes as s and r change
+        
+        
         // Use the content pane's default BorderLayout. No need for
         // setLayout(new BorderLayout());
         // Display the window
@@ -227,31 +255,75 @@ public class Lomo {
         frame.setVisible(true);
 	}
 	
-	private static void addComponentsToPane(Container pane, Image img) {
+
+	private static void addComponentsToPane(Container pane, Image image) {
 	        if (!(pane.getLayout() instanceof BorderLayout)) {
 	            pane.add(new JLabel("Container doesn't use BorderLayout!"));
 	            return;
 	        }
-	        JPanel sliderPanel = new JPanel();
+	        sliderPanel = new JPanel();
+	        saveButton = new JButton("Save");
+	        imgLabel = new JLabel(new ImageIcon());
+	        sliderS = new JSlider(0, BETA_SLIDER_MAX, 0);
+	        sliderR = new JSlider(0, ALPHA_SLIDER_MAX, 0);
+	        
 	        sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.PAGE_AXIS));
-	        sliderPanel.add(new JLabel(String.format("Alpha x %d", ALPHA_SLIDER_MAX)));
-	        JSlider slider = new JSlider(0, ALPHA_SLIDER_MAX, 0);
-	        slider.setMajorTickSpacing(20);
-	        slider.setMinorTickSpacing(5);
-	        slider.setPaintTicks(true);
-	        slider.setPaintLabels(true);
-	        slider.addChangeListener(new ChangeListener() {
-	            @Override
-	            public void stateChanged(ChangeEvent e) {
-	                JSlider source = (JSlider) e.getSource();
-	                alphaVal = source.getValue();
-	               // update();
-	            }
-	        });
-	        sliderPanel.add(slider);
+	     	        
+	        sliderR.setMajorTickSpacing(20);
+	        sliderR.setMinorTickSpacing(5);
+	        sliderR.setPaintTicks(true);
+	        sliderR.setPaintLabels(true);
+	        
+	        sliderS.setMajorTickSpacing(20);
+	        sliderS.setMinorTickSpacing(5);
+	        sliderS.setPaintTicks(true);
+	        sliderS.setPaintLabels(true);
+	        
+	       // saveButton.setFocusable(true);
+	        saveButton.addActionListener( this);
+	        
+	        sliderS.addChangeListener(this); 
+	        sliderR.addChangeListener(this);
+	      
+	        sliderPanel.add(new JLabel(String.format("Alpha x %d", ALPHA_SLIDER_MAX)));        
+	        sliderPanel.add(new JLabel(String.format("Beta x %d", BETA_SLIDER_MAX)));
+	        sliderPanel.add(sliderS);
+	        sliderPanel.add(sliderR);
 	        pane.add(sliderPanel, BorderLayout.PAGE_START);
-	        imgLabel = new JLabel(new ImageIcon(img));
 	        pane.add(imgLabel, BorderLayout.CENTER);
 	    }
+	
+			/**
+			 * 
+			 * @param e
+			 */
+			public void actionPerformed (ActionEvent e) {
+			save()
+			}
+				
+			  /**
+	         * 
+	         * @param e
+	         */
+            public void stateChanged(ChangeEvent e) {
+            	if(e.getSource().equals(sliderS)) {
+                JSlider source = (JSlider) e.getSource();
+                r = source.getValue();
+             // update();
+            	}
+            	if(e.getSource().equals(sliderR)) {
+                JSlider source = (JSlider) e.getSource();
+                s = source.getValue();
+               // update();
+                }
+            }
+	        
+            private void update(Mat img, Mat filteredImg) {
+                imgCaptureLabel.setIcon(new ImageIcon(HighGui.toBufferedImage(imgCapture)));
+                imgDetectionLabel.setIcon(new ImageIcon(HighGui.toBufferedImage(imgThresh)));
+                frame.repaint();
+            }
+    
+}
 
 }
