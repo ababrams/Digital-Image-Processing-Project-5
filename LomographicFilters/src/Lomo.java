@@ -228,7 +228,7 @@ public class Lomo implements ActionListener, ChangeListener {
 
 	public void GUI(Mat matImg) {
 		// Create and set up the window.
-		frame = new JFrame("Linear Blend");
+		frame = new JFrame("Lomographic Filter");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// Change original image to buffered image to display
 		Image image = HighGui.toBufferedImage(matImg);
@@ -238,8 +238,7 @@ public class Lomo implements ActionListener, ChangeListener {
 		// Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0,
 		// Imgproc.INTER_AREA);
 
-		// Use the content pane's default BorderLayout. No need for
-		// setLayout(new BorderLayout());
+		
 		// Display the window
 		frame.pack();
 		frame.setVisible(true);
@@ -255,7 +254,8 @@ public class Lomo implements ActionListener, ChangeListener {
 		imgLabel = new JLabel(new ImageIcon());
 		sliderS = new JSlider(0, BETA_SLIDER_MAX, 0);
 		sliderR = new JSlider(0, ALPHA_SLIDER_MAX, 0);
-
+	    imgLabel = new JLabel(new ImageIcon(image));
+		
 		sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.PAGE_AXIS));
 
 		sliderR.setMajorTickSpacing(20);
@@ -274,6 +274,7 @@ public class Lomo implements ActionListener, ChangeListener {
 		sliderS.addChangeListener(this);
 		sliderR.addChangeListener(this);
 
+		pane.add(imgLabel);
 		sliderPanel.add(new JLabel(String.format("Alpha x %d", ALPHA_SLIDER_MAX)));
 		sliderPanel.add(new JLabel(String.format("Beta x %d", BETA_SLIDER_MAX)));
 		sliderPanel.add(sliderS);
