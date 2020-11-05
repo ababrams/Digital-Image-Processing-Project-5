@@ -74,7 +74,6 @@ public class Lomo implements ActionListener, ChangeListener {
 //		//lomoGUI(filteredImage);
 //		HighGui.imshow("Image", filteredImage);
 //		HighGui.waitKey();
-		System.exit(0);
 	}
 
 	/**
@@ -119,63 +118,7 @@ public class Lomo implements ActionListener, ChangeListener {
 		return lookupTable;
 
 	}
-
-	/**
-	 * Processes argument passed from command line. If the argument is the file path
-	 * of image the GUI is executed.
-	 * 
-	 * @param s argument at index 0
-	 */
-	public void commandLineParser(String f) {
-		switch (f) {
-		case "-h":
-			System.out.println("How to use this program.\n\n"
-					+ "After program compilation, when running the program, include directory path of desired image to be manipulated after program call.\n"
-					+ "\n\tLomo <image-file-name>" + "\n\nThe GUI will now execute with provided image."
-					+ "\nUse trackbars to manipulate image according to assignment specifications and requirements."
-					+ "\nPress 's' to save copy of the current image in display and enter filename."
-					+ "\nPress 'q' to terminate the application.");
-			break;
-		default:
-			File file = new File(f);
-			if (file.isFile()) {
-				try {
-					img = Imgcodecs.imread(f, 1);
-					if (img == null) {
-						System.out.println("File at " + file.toString() + " is not an image.");
-						System.exit(0);
-					} else {
-						GUI(img);
-						System.out.println("Image: " + file.toString());
-					}
-				} catch (Exception e) {
-					System.out.println("File could not be opened.");
-				}
-			} else if (file.isDirectory()) {
-				System.out.println("Filepath is a directory, include file in passed arguments.");
-			} else {
-				System.out.println("Filepath to image error.");
-			}
-		}
-	}
-
-	/**
-	 * Saves copy of current displayed image user must input filepath and filename.
-	 * 
-	 * @param img current displayed image
-	 */
-	public void save(Mat img) {
-		Scanner in = new Scanner(System.in);
-
-		System.out.println("Enter filepath and filename to save current copy of image: ");
-		String fName = in.next();
-
-		Imgcodecs.imwrite(fName, img);
-		System.out.println("Image saved.");
-
-		in.close();
-	}
-
+	
 	/**
 	 * Applies vignette effect to image
 	 * 
@@ -222,9 +165,67 @@ public class Lomo implements ActionListener, ChangeListener {
 		// multiply the mask image with the image manipulated by the red filter
 		Mat newMat = new Mat();
 		newMat = img.mul(mask);
-		newMat.convertTo(newMat, CvType.CV_8UC3);
+		newMat.convertTo(img, CvType.CV_8UC3);
 		return newMat;
 	}
+	
+	/**
+	 * Processes argument passed from command line. If the argument is the file path
+	 * of image the GUI is executed.
+	 * 
+	 * @param s argument at index 0
+	 */
+	public void commandLineParser(String f) {
+		switch (f) {
+		case "-h":
+			System.out.println("How to use this program.\n\n"
+					+ "After program compilation, when running the program, include directory path of desired image to be manipulated after program call.\n"
+					+ "\n\tLomo <image-file-name>" + "\n\nThe GUI will now execute with provided image."
+					+ "\nUse trackbars to manipulate image according to assignment specifications and requirements."
+					+ "\nPress 's' to save copy of the current image in display and enter filename."
+					+ "\nPress 'q' to terminate the application.");
+			break;
+		default:
+			File file = new File(f);
+			if (file.isFile()) {
+				try {
+					img = Imgcodecs.imread(f, 1);
+					if (img == null) {
+						System.out.println("File at " + file.toString() + " is not an image.");
+						System.exit(0);
+					} else {
+						GUI(img);
+						System.out.println("Image: " + file.toString());
+					}
+				} catch (Exception e) {
+					System.out.println("File could not be opened.");
+				}
+			} else if (file.isDirectory()) {
+				System.out.println("Filepath is a directory, include file in passed arguments.");
+			} else {
+				System.out.println("Filepath to image error.");
+			}
+		}
+	}
+
+	/**
+	 * Saves copy of current displayed image, user must input filepath and filename.
+	 * 
+	 * @param img current displayed image
+	 */
+	public void save(Mat img) {
+		Scanner in = new Scanner(System.in);
+
+		System.out.println("Enter filepath and filename to save current copy of image: ");
+		String fName = in.next();
+
+		Imgcodecs.imwrite(fName, img);
+		System.out.println("Image saved.");
+
+		in.close();
+	}
+
+
 
 	public void GUI(Mat matImg) {
 		// Create and set up the window.
@@ -242,6 +243,7 @@ public class Lomo implements ActionListener, ChangeListener {
 		// Display the window
 		frame.pack();
 		frame.setVisible(true);
+		System.out.println();
 	}
 
 	private void addComponentsToPane(Container pane, Image image) {
