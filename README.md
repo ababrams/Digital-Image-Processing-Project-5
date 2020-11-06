@@ -12,12 +12,12 @@ cd to src file where Lomo.java is located
 To compile:
 
 javac -cp /C:/... file path to open cv jar:. Lomo.java
-example: (personal using Ubuntu)
+example:
 javac -cp /home/corwin/opencv_build/opencv/build/bin/opencv-440.jar:. Lomo.java
 To run:
 java -cp /C:/ ... file path to open cv jar:. -Djava.library.path=/C:/ ... path to open cv library  Lomo 'path to image'
-example: (personal using Ubuntu)
-//TODO
+example: java -cp /home/corwin/opencv_build/opencv/build/bin/opencv-440.jar:.  -Djava.library.path=/home/corwin/opencv_build/opencv/build/lib/ Lomo /home/corwin/Desktop/images/
+
 
 Running the program displays the Image and trackbars. One trackbar controls the parameter s that affects the color manipulation of the red channel. The other trackbar controls the parameter r which determines the radius of the halo for the vignette effect. 
 To change the radius and the color manipulation parameter, toggle each trackbar.
