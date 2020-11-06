@@ -44,9 +44,9 @@ import javax.swing.event.ChangeListener;
 
 public class Lomo implements ActionListener, ChangeListener {
 	public Mat img;
+	public Mat copyImg;
 	private final int ALPHA_SLIDER_MAX = 100;
-	private final int BETA_SLIDER_MAX = 100;
-	private int alphaVal = 0;
+	private final int BETA_SLIDER_MAX = 20;
 	private JFrame frame;
 	private JLabel imgLabel;
 	private JButton saveButton;
@@ -65,15 +65,6 @@ public class Lomo implements ActionListener, ChangeListener {
 		} else {
 			lomo.commandLineParser(args[0]);
 		}
-//		img = Imgcodecs.imread("images/costume.png", 1);
-//		double s = 0.20;
-//		double r = 45;
-//		Mat red = redFilter(img, s);
-//		Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0, Imgproc.INTER_AREA);
-//		Mat filteredImage = haloFilter(red, r);
-//		//lomoGUI(filteredImage);
-//		HighGui.imshow("Image", filteredImage);
-//		HighGui.waitKey();
 	}
 
 	/**
@@ -190,6 +181,8 @@ public class Lomo implements ActionListener, ChangeListener {
 			if (file.isFile()) {
 				try {
 					img = Imgcodecs.imread(f, 1);
+					Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0,
+							 Imgproc.INTER_AREA);
 					if (img == null) {
 						System.out.println("File at " + file.toString() + " is not an image.");
 						System.exit(0);
@@ -236,8 +229,6 @@ public class Lomo implements ActionListener, ChangeListener {
 		// Set up the content pane.'
 		addComponentsToPane(frame.getContentPane(), image);
 
-		// Imgproc.resize(img, img, new Size(img.rows() / 2, img.rows() / 2), 0, 0,
-		// Imgproc.INTER_AREA);
 
 		
 		// Display the window
@@ -251,35 +242,38 @@ public class Lomo implements ActionListener, ChangeListener {
 			pane.add(new JLabel("Container doesn't use BorderLayout!"));
 			return;
 		}
+		//Instantiating the components
 		sliderPanel = new JPanel();
 		saveButton = new JButton("Save");
 		imgLabel = new JLabel(new ImageIcon());
-		sliderS = new JSlider(0, BETA_SLIDER_MAX, 0);
-		sliderR = new JSlider(0, ALPHA_SLIDER_MAX, 0);
+		sliderS = new JSlider(8, BETA_SLIDER_MAX, 20);
+		sliderR = new JSlider(1, ALPHA_SLIDER_MAX, 100);
 	    imgLabel = new JLabel(new ImageIcon(image));
 		
 		sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.PAGE_AXIS));
 
+		
 		sliderR.setMajorTickSpacing(20);
 		sliderR.setMinorTickSpacing(5);
 		sliderR.setPaintTicks(true);
 		sliderR.setPaintLabels(true);
 
-		sliderS.setMajorTickSpacing(20);
-		sliderS.setMinorTickSpacing(5);
+		sliderS.setMajorTickSpacing(1);
+		//sliderS.setMinorTickSpacing(1);
 		sliderS.setPaintTicks(true);
 		sliderS.setPaintLabels(true);
 
-		// saveButton.setFocusable(true);
 		saveButton.addActionListener(this);
 
 		sliderS.addChangeListener(this);
 		sliderR.addChangeListener(this);
 
+		pane.add(saveButton, BorderLayout.PAGE_END);
 		pane.add(imgLabel);
-		sliderPanel.add(new JLabel(String.format("Alpha x %d", ALPHA_SLIDER_MAX)));
-		sliderPanel.add(new JLabel(String.format("Beta x %d", BETA_SLIDER_MAX)));
+		
+		sliderPanel.add(new JLabel(String.format("S")));
 		sliderPanel.add(sliderS);
+		sliderPanel.add(new JLabel(String.format("R")));
 		sliderPanel.add(sliderR);
 		pane.add(sliderPanel, BorderLayout.PAGE_START);
 		pane.add(imgLabel, BorderLayout.CENTER);
@@ -291,7 +285,7 @@ public class Lomo implements ActionListener, ChangeListener {
 	 * @param e
 	 */
 	public void actionPerformed(ActionEvent e) {
-		save(img);
+		save(copyImg);
 	}
 
 	/**
@@ -300,20 +294,13 @@ public class Lomo implements ActionListener, ChangeListener {
 	 * @param e
 	 */
 	public void stateChanged(ChangeEvent e) {
-		if (e.getSource().equals(sliderS)) {
-			JSlider source = (JSlider) e.getSource();
-			r = source.getValue();
-			Mat red = redFilter(img, s);
-			haloFilter(red, r);
-			update(img);
-		}
-		if (e.getSource().equals(sliderR)) {
-			JSlider source = (JSlider) e.getSource();
-			s = source.getValue();
-			Mat red = redFilter(img, s);
-			haloFilter(red, r);
-			update(img);
-		}
+			r = sliderR.getValue();
+			s = sliderS.getValue();
+			copyImg = new Mat();
+			img.copyTo(copyImg);
+			redFilter(copyImg, s*.01);
+			haloFilter(copyImg, r);
+			update(copyImg);
 	}
 
 	/**
