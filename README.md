@@ -4,7 +4,7 @@ Program written in Java/Eclipse.
 
 It can be ran through Eclipse with Lomo.java holding the main class for configuration. If it doesn't already, eclipse needs opencv added as a User Library.
 
-Program requires a file path argument for the input image. 
+Program requires a file path argument for the input image. This program is calibrated for larger images. It is recommended to use the images provided in the image folder. If other images are used, they will be automatcially resized to half their original size. 
 Running through command line.
 
 cd to src file where Lomo.java is located
@@ -26,7 +26,7 @@ example: java -cp /home/corwin/opencv_build/opencv/build/bin/opencv-440.jar:.  -
 
 Running the program displays the Image and trackbars. One trackbar controls the parameter s that affects the color manipulation of the red channel. The other trackbar controls the parameter r which determines the radius of the halo for the vignette effect. 
 To change the radius and the color manipulation parameter, toggle each trackbar.
-The image is set in a display browser to be viewed as it is manipulated. //TODO save function information
+The image is set in a display browser to be viewed as it is manipulated. To save the image currently displayed, click the save button on the bottom of the gui and enter the absolute path into the command line. 
 
 
 Tests:
@@ -44,7 +44,7 @@ Execute program with file that does not exist
 Result: Console output "File could not be opened."
 
 Test3:
-Task bar was set as 100 and 0.20. Then the task bar was set at 1 and 0.08
+Task bar was set as 100 and 20. Then the task bar was set at 1 and 8
 
 Result: The image changed appropriately 
 
