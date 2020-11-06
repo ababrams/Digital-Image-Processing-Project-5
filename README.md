@@ -12,10 +12,15 @@ cd to src file where Lomo.java is located
 To compile:
 
 javac -cp /C:/... file path to open cv jar:. Lomo.java
+
 example:
+
 javac -cp /home/corwin/opencv_build/opencv/build/bin/opencv-440.jar:. Lomo.java
+
 To run:
+
 java -cp /C:/ ... file path to open cv jar:. -Djava.library.path=/C:/ ... path to open cv library  Lomo 'path to image'
+
 example: java -cp /home/corwin/opencv_build/opencv/build/bin/opencv-440.jar:.  -Djava.library.path=/home/corwin/opencv_build/opencv/build/lib/ Lomo /home/corwin/Desktop/images/
 
 
