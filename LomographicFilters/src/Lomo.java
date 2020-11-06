@@ -39,7 +39,9 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
- *
+ *Class lomo stands for lomographic filter.
+ *This class implements 2 lomographic filters, a red channel filter and a vignette effect.
+ *These filters are modified through the use of sliders and the resulting image can be saved into the file directy by a button
  */
 
 public class Lomo implements ActionListener, ChangeListener {
@@ -219,7 +221,7 @@ public class Lomo implements ActionListener, ChangeListener {
 	}
 
 
-
+	//Start the code for the GUI here
 	public void GUI(Mat matImg) {
 		// Create and set up the window.
 		frame = new JFrame("Lomographic Filter");
@@ -228,8 +230,6 @@ public class Lomo implements ActionListener, ChangeListener {
 		Image image = HighGui.toBufferedImage(matImg);
 		// Set up the content pane.'
 		addComponentsToPane(frame.getContentPane(), image);
-
-
 		
 		// Display the window
 		frame.pack();
@@ -237,12 +237,19 @@ public class Lomo implements ActionListener, ChangeListener {
 		System.out.println();
 	}
 
+	/** 
+	 * Instantiating the components, takes the image as input
+	 */
 	private void addComponentsToPane(Container pane, Image image) {
 		if (!(pane.getLayout() instanceof BorderLayout)) {
 			pane.add(new JLabel("Container doesn't use BorderLayout!"));
 			return;
 		}
-		//Instantiating the components
+
+		//Sliders are implemented here
+		//SliderS is for the red filter
+		//SliderR is for the vignette filter
+		//saveButton is for the save button
 		sliderPanel = new JPanel();
 		saveButton = new JButton("Save");
 		imgLabel = new JLabel(new ImageIcon());
@@ -252,14 +259,13 @@ public class Lomo implements ActionListener, ChangeListener {
 		
 		sliderPanel.setLayout(new BoxLayout(sliderPanel, BoxLayout.PAGE_AXIS));
 
-		
 		sliderR.setMajorTickSpacing(20);
 		sliderR.setMinorTickSpacing(5);
 		sliderR.setPaintTicks(true);
 		sliderR.setPaintLabels(true);
 
 		sliderS.setMajorTickSpacing(1);
-		//sliderS.setMinorTickSpacing(1);
+		sliderS.setMinorTickSpacing(1);
 		sliderS.setPaintTicks(true);
 		sliderS.setPaintLabels(true);
 
@@ -268,9 +274,11 @@ public class Lomo implements ActionListener, ChangeListener {
 		sliderS.addChangeListener(this);
 		sliderR.addChangeListener(this);
 
+		//Adds the save button
 		pane.add(saveButton, BorderLayout.PAGE_END);
 		pane.add(imgLabel);
 		
+		//Labels both of the sliders and adds them to the GUI
 		sliderPanel.add(new JLabel(String.format("S")));
 		sliderPanel.add(sliderS);
 		sliderPanel.add(new JLabel(String.format("R")));
